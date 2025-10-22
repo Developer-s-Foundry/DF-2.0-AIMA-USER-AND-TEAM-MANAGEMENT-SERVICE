@@ -12,8 +12,7 @@ export const models: Record<string, ModelRegistryEntry> = {};
 
 const modelsDir = __dirname;
 
-/**
- * Utility: safely import a file, ignoring missing modules or syntax issues.
+/* Utility: safely import a file, ignoring missing modules or syntax issues.
  */
 const safeRequire = (filePath: string): Record<string, any> | null => {
   try {
@@ -21,13 +20,12 @@ const safeRequire = (filePath: string): Record<string, any> | null => {
   } catch (err: unknown) {
     const msg =
       err instanceof Error ? err.message : JSON.stringify(err, null, 2);
-    console.warn(`⚠️ Could not load module at ${filePath}: ${msg}`);
+    console.warn(`Could not load module at ${filePath}: ${msg}`);
     return null;
   }
 };
 
-/**
- * Utility: Recursively scan directories to find all model-related files.
+/* Utility: Recursively scan directories to find all model-related files.
  */
 const scanDirectories = (baseDir: string): string[] => {
   const entries = fs.readdirSync(baseDir);
@@ -50,8 +48,7 @@ const scanDirectories = (baseDir: string): string[] => {
   return files;
 };
 
-/**
- * Utility: Register a module if it exports a Mongoose model.
+/* Utility: Register a module if it exports a Mongoose model.
  */
 const registerModule = (filePath: string): void => {
   const mod = safeRequire(filePath);
@@ -68,7 +65,7 @@ const registerModule = (filePath: string): void => {
     entry.model = model as Model<any>;
     const baseName = name.replace("Model", "");
     models[baseName] = entry as ModelRegistryEntry;
-    console.log(`✅ Registered model: ${name}`);
+    console.log(`Registered model: ${name}`);
   }
 
   // --- Detect exported Schema ---
@@ -88,8 +85,7 @@ const registerModule = (filePath: string): void => {
   }
 };
 
-/**
- * Main: Scan and register all models under /models directory.
+/* Main: Scan and register all models under /models directory.
  */
 const allFiles = scanDirectories(modelsDir);
 
@@ -97,8 +93,7 @@ for (const file of allFiles) {
   registerModule(file);
 }
 
-/**
- * Optional: Accessor helpers for anywhere in the app.
+/* Optional: Accessor helpers for anywhere in the app.
  */
 export const getModel = <T = any>(name: string): Model<T> | null => {
   return (models[name]?.model as Model<T>) || null;
@@ -112,4 +107,4 @@ export const getInterface = (name: string): unknown => {
   return models[name]?.interface;
 };
 
-console.log(`📦 Loaded ${Object.keys(models).length} models successfully.`);
+console.log(`Loaded ${Object.keys(models).length} models successfully.`);
