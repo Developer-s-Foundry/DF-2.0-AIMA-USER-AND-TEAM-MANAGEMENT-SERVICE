@@ -1,31 +1,25 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ITeam extends Document {
-    name: string;
-    description?: string;
-    created_at: Date;
-    updated_at: Date;
-};
+  name: string;
+  description?: string;
+  created_by?: string; 
+  created_at: Date;
+  updated_at: Date;
+}
 
-
-const TeamSchema = new Schema<ITeam>(
-    {
-        name: { type: String, required: true, unique: true, trim: true },
-        description: { type: String, trim: true },
-    }, 
-    {
-        timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
-        collection: 'teams',
-    }
+const TeamSchema: Schema = new Schema(
+  {
+    name: { type: String, required: true, unique: true, trim: true, lowercase: true },
+    description: { type: String, trim: true },
+    created_by: { type: String, trim: true },
+  },
+  {
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+    collection: 'teams',
+  }
 );
 
-TeamSchema.set('toJSON', {
-    virtuals: true,
-    transform: (_, ret) => {
-        delete ret._id;
-        delete ret.__v;
-    },
-});
-
+TeamSchema.index({ name: 1 });
 
 export const Team = mongoose.model<ITeam>('Team', TeamSchema);

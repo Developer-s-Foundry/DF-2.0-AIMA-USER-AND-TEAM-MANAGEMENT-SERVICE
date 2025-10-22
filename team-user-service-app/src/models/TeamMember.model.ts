@@ -1,23 +1,34 @@
 import mongoose, { Schema, Document } from 'mongoose';
-// import { RoleType } from '../../role/models/RolePermission.model'; // Member 3’s file
+import { RoleType } from './RolePermission.model';
 
 export interface ITeamMember extends Document {
-  user_id: string;
-  team_id: mongoose.Types.ObjectId;
+  userId: string;
+  teamId: mongoose.Types.ObjectId;
   role: RoleType;
-  joined_at: Date;
+  created_at: Date;
+  updated_at: Date;
 }
 
-const TeamMemberSchema = new Schema<ITeamMember>(
+const TeamMemberSchema = new Schema(
   {
-    user_id: { type: String, required: true },
-    team_id: { type: Schema.Types.ObjectId, ref: 'Team', required: true },
-    // role: { type: String, enum: Object.values(RoleType), default: RoleType.VIEWER },
-    joined_at: { type: Date, default: Date.now },
+    userId: { type: String, required: true, trim: true },
+    teamId: { type: Schema.Types.ObjectId, ref: 'Team', required: true },
+    role: {
+      type: String,
+      enum: Object.values(RoleType),
+      required: true,
+      lowercase: true,
+      trim: true,
+    },
   },
-  { collection: 'team_members' }
+  {
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+    collection: 'team_members',
+  }
 );
 
-TeamMemberSchema.index({ user_id: 1, team_id: 1 }, { unique: true });
+TeamMemberSchema.index({ userId: 1, teamId: 1 }, { unique: true });
+TeamMemberSchema.index({ teamId: 1 });
+TeamMemberSchema.index({ role: 1 });
 
 export const TeamMember = mongoose.model<ITeamMember>('TeamMember', TeamMemberSchema);

@@ -1,36 +1,45 @@
-import { TeamMember, ITeamMember } from "../models/TeamMember.model";
-// import { RoleType } from "../models/RolePermission.model";
+import { TeamMember, ITeamMember } from '../models/TeamMember.model';
+import { RoleType } from '../models/RolePermission.model';
+import mongoose from 'mongoose';
+import { Team } from '../models/Team.model';
 
-export const addUserToTeam = async (userId: string, teamId: string, role: string): Promise<ITeamMember> => {
+export const MemberService = {
+  async addUserToTeam(userId: string, teamId: string, role: RoleType): Promise<ITeamMember> {
+    if (!mongoose.Types.ObjectId.isValid(teamId)) throw new Error('Invalid team id');
+
+    const team = await Team.findById(teamId);
+    if (!team) throw new Error('Team not found');
+
     const exists = await TeamMember.findOne({ userId, teamId });
-    if (exists) throw new Error("ser already in team");
-    
-    return TeamMember.create({ userId, teamId, role });
-};
+    if (exists) throw new Error('User already in team');
 
-export const removeUserFromTeam = async (userId: string, teamId: string): Promise<void> => {
+    const member = new TeamMember({ userId, teamId, role });
+    return member.save();
+  },
+
+  async removeUserFromTeam(userId: string, teamId: string): Promise<void> {
     await TeamMember.findOneAndDelete({ userId, teamId });
-};
+  },
 
-export const updateUserRoleInTeam = async (userId: string, teamId: string, role: string): Promise<void> => {
-    await TeamMember.updateOne({ userId, teamId }, { role });
-};
+  async updateUserRoleInTeam(userId: string, teamId: string, role: RoleType): Promise<void> {
+    const res = await TeamMember.updateOne({ userId, teamId }, { role });
+    if (res.matchedCount === 0) throw new Error('Membership not found');
+  },
 
-export const getTeamMembers = async (teamId: string): Promise<ITeamMember[]> => {
+  async getTeamMembers(teamId: string): Promise<ITeamMember[]> {
     return TeamMember.find({ teamId });
-};
+  },
 
-export const getUserTeams = async (userId: string): Promise<ITeamMember[]> => {
-    return TeamMember.find({ userId }).populate("teamId");
-};
+  async getUserTeams(userId: string): Promise<Array<ITeamMember & { team?: any }>> {
+    return TeamMember.find({ userId }).populate('teamId');
+  },
 
-export const getUserRoleInTeam = async (userId: string, teamId: string): Promise<string | null> => {
+  async getUserRoleInTeam(userId: string, teamId: string): Promise<RoleType | null> {
     const member = await TeamMember.findOne({ userId, teamId });
-    return member ? member.role : null;
-};
+    return member ? (member.role as RoleType) : null;
+  },
 
-export const isUserInTeam = async (userId: string, teamId: string): Promise<boolean> => {
+  async isUserInTeam(userId: string, teamId: string): Promise<boolean> {
     return !!(await TeamMember.findOne({ userId, teamId }));
+  },
 };
-
-
