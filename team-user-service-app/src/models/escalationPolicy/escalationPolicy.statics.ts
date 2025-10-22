@@ -83,6 +83,10 @@ const statics: Partial<IEscalationPolicyModel> = {
     }).exec();
     return result.deletedCount || 0;
   },
+
+  async restoreById(this: IEscalationPolicyModel, id: string) {
+    return this.findByIdAndUpdate(id, { deleted: false }, { new: true });
+  },
 };
 
 // Attach statics to schema (use `as any` to satisfy TS/Mongoose mismatch)

@@ -20,7 +20,7 @@
     "allowJs": true,
     "checkJs": false
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/models/index.ts"],
   "exclude": ["node_modules", "dist"],
   "ts-node": {
     "esm": false

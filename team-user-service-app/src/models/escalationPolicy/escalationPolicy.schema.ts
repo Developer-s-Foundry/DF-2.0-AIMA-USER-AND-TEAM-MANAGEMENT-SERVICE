@@ -8,7 +8,10 @@ const EscalationStepSchema = new Schema<IEscalationStep>({
   order: { type: Number, required: true },
   timeoutMinutes: { type: Number, required: true },
   escalationType: { type: String, required: true, enum: ["user", "team"] },
-  escalationTargetId: { type: Schema.Types.ObjectId, required: true },
+  escalationTargetId: {
+    type: Schema.Types.ObjectId,
+    refPath: "escalationType",
+  },
 });
 
 export const EscalationPolicySchema = new Schema<IEscalationPolicy>(
@@ -41,3 +44,5 @@ EscalationPolicySchema.index(
     partialFilterExpression: { isDeleted: true },
   }
 );
+
+Object.assign(EscalationPolicySchema.statics, EscalationPolicySchema);

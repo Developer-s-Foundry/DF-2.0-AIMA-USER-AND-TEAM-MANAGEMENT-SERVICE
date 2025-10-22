@@ -40,3 +40,7 @@ export interface IEscalationPolicyModel extends Model<IEscalationPolicy> {
   ): Promise<IEscalationPolicy | null>;
   permanentlyDeleteOld(days?: number): Promise<number>;
 }
+
+export interface IEscalationPolicyModel extends Model<IEscalationPolicy> {
+  restoreById(id: string): Promise<IEscalationPolicy | null>;
+}
