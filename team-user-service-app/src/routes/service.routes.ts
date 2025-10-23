@@ -6,7 +6,7 @@ import {
   updateService,
 } from "../controllers/service.controller";
 // import { authenticate } from "../middleware/auth.middleware";
-// import { checkPermission } from "../middleware/role.middleware";
+import { requirePermission } from "../middleware/role.middleware";
 
 const router = Router();
 
@@ -17,6 +17,7 @@ const router = Router();
  */
 router.get(
   "/",
+  requirePermission("view_services"),
   // authenticate,
   getAllServices
 );
@@ -28,6 +29,7 @@ router.get(
  */
 router.get(
   "/:serviceName/team",
+  requirePermission("view_service"),
   // authenticate,
   getTeamForService
 );
@@ -39,6 +41,7 @@ router.get(
  */
 router.post(
   "/",
+  requirePermission("create_service"),
   // authenticate,
   // checkPermission('create_service'),
   createService
@@ -51,6 +54,7 @@ router.post(
  */
 router.patch(
   "/:id",
+  requirePermission("update_service"),
   // authenticate,
   // checkPermission('update_service'),
   updateService

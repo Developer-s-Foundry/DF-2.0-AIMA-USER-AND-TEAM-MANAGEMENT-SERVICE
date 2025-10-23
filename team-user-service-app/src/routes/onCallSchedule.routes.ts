@@ -6,7 +6,7 @@ import {
   softDeleteOnCallSchedule,
 } from "../controllers/OnCallSchedule.controller";
 // import { authenticate } from "../middleware/auth.middleware";
-// import { checkPermission } from "../middleware/role.middleware";
+import { requirePermission } from "../middleware/role.middleware";
 
 const router = Router();
 
@@ -15,7 +15,11 @@ const router = Router();
  * @desc    Get the current on-call person for a team
  * @access  Public (or Protected, depending on setup)
  */
-router.get("/current", getCurrentOnCall);
+router.get(
+  "/current",
+  requirePermission("view_oncall_schedule"),
+  getCurrentOnCall
+);
 
 /**
  * @route   POST /api/v1/on-call-schedules
@@ -24,6 +28,7 @@ router.get("/current", getCurrentOnCall);
  */
 router.post(
   "/",
+  requirePermission("create_oncall_schedule"),
   // authenticate,
   // checkPermission('manage_on_call_schedule'),
   createOnCallSchedule
@@ -36,6 +41,7 @@ router.post(
  */
 router.patch(
   "/:id",
+  requirePermission("update_oncall_schedule"),
   // authenticate,
   // checkPermission('manage_on_call_schedule'),
   updateOnCallSchedule
