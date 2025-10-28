@@ -48,6 +48,7 @@ try {
 
 // --- API Routes ---
 const API_PREFIX = "/api/v1";
+
 app.use(`${API_PREFIX}/services`, serviceRoutes);
 app.use(`${API_PREFIX}/onCallSchedule`, onCallScheduleRoutes);
 app.use(`${API_PREFIX}/escalationPolicy`, escalationPolicyRoutes);
