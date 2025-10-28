@@ -1,12 +1,12 @@
 import express from 'express';
 import permissionController from '../controllers/permission.controller';
+import { authenticateToken } from '../middleware/auth.middleware';
 
-// import authMiddleware from '../middleware/auth.middleware'; // Role 1's middleware
 
 const router = express.Router();
 
 // Apply authentication to all routes
-// router.use(authMiddleware);
+router.use(authenticateToken)
 
 // ============================================
 // PERMISSION CRUD (Admin Only)
